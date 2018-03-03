@@ -1,0 +1,53 @@
+plugins {
+    id 'groovy'
+    id 'java-gradle-plugin'
+    id 'maven-publish'
+    id "com.gradle.plugin-publish" version "0.9.10"
+}
+
+group "argelbargel.gradle.plugins"
+archivesBaseName = 'build-modules'
+if (project.hasProperty('release') && project.getProperty('release') != '') {
+    version = project.getProperty('release')
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    jcenter()
+}
+
+publishing {
+    repositories {
+        maven {
+            url "$buildDir/repo"
+        }
+    }
+}
+
+dependencies {
+    compile "org.apache.commons:commons-lang3:3.7"
+    compile "commons-io:commons-io:2.6"
+    compile 'org.ajoberstar:grgit:2.1.0'
+}
+
+dependencies {
+    compile localGroovy()
+
+    testCompile('org.spockframework:spock-core:1.0-groovy-2.4') {
+        exclude module: 'groovy-all' // use the version that is distributed with Gradle
+    }
+}
+
+gradlePlugin {
+    plugins {
+        buildModule {
+            id = 'argelbargel.build.module'
+            implementationClass = "${group}.build.modules.module.BuildModulePlugin"
+        }
+        buildModuleManager {
+            id = 'argelbargel.build.module-manager'
+            implementationClass = "${group}.build.modules.manager.BuildModuleManagerPlugin"
+        }
+    }
+}
