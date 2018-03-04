@@ -2,7 +2,6 @@ package argelbargel.gradle.plugins.build.modules.manager
 
 import argelbargel.gradle.plugins.build.modules.manager.repository.GitBuildModuleRepository
 import org.gradle.api.Project
-import org.gradle.internal.reflect.DirectInstantiator
 import org.gradle.util.ConfigureUtil
 
 import static org.gradle.internal.reflect.DirectInstantiator.instantiate
