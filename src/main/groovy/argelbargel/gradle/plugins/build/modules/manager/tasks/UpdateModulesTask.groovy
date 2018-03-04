@@ -37,7 +37,7 @@ class UpdateModulesTask extends DefaultTask {
     }
 
     void parseProperty(String property, BuildModuleManagerExtension extension) {
-        def newModules = property.split(/[\\s,]+/) as List
+        def newModules = property.split(/[\s,]+/) as List
         def defaultMode = checkMode(newModules, ALL_MODULES, null)
         extension.allModules.each {
             def active = checkMode(newModules, it.name, defaultMode)
