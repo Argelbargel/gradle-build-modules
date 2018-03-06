@@ -43,11 +43,11 @@ gradlePlugin {
     plugins {
         buildModule {
             id = 'argelbargel.build.module'
-            implementationClass = "${group}.build.modules.module.BuildModulePlugin"
+            implementationClass = "${group}.buildModules.module.BuildModulePlugin"
         }
         buildModuleManager {
             id = 'argelbargel.build.module-manager'
-            implementationClass = "${group}.build.modules.manager.BuildModuleManagerPlugin"
+            implementationClass = "${group}.buildModules.manager.BuildModuleManagerPlugin"
         }
     }
 }
