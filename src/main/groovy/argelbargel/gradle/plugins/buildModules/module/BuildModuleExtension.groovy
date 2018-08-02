@@ -13,7 +13,7 @@ class BuildModuleExtension {
     private final Project project
     private File propertiesFile
     private BuildModuleProperties propertiesCache
-    private final AndSpec<Dependency> substitutionSpec
+    private AndSpec<Dependency> substitutionSpec
 
     BuildModuleExtension(Project project) {
         this.project = project
@@ -39,11 +39,19 @@ class BuildModuleExtension {
     }
 
     void substitutesWhen(Closure<Boolean> closure) {
-        substitutionSpec & closure
+        substitutionSpec = substitutionSpec & closure
     }
 
     void substitutesWhen(Spec<Dependency> spec) {
-        substitutionSpec & spec
+        substitutionSpec = substitutionSpec & spec
+    }
+
+    boolean isStandaloneBuild() {
+        return !isIncluded()
+    }
+
+    boolean isIncluded() {
+        return project.ext.has(PROPERTY_MODULE_INCLUDED) ? (boolean) project.ext.get(PROPERTY_MODULE_INCLUDED) : false
     }
 
 

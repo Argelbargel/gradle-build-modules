@@ -1,7 +1,5 @@
 package argelbargel.gradle.plugins.buildModules.module
 
-import argelbargel.gradle.plugins.buildModules.module.tasks.MakeModuleTask
-import argelbargel.gradle.plugins.buildModules.module.tasks.MakeRootProjectTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -16,12 +14,6 @@ class BuildModulePlugin implements Plugin<Project> {
     void apply(Project module) {
         BuildModuleExtension ext = module.extensions.create(EXTENSION_NAME_MODULE, BuildModuleExtension, module)
 
-        if (ext.moduleSettingsFile.exists()) {
-            module.tasks.create("makeRootProject", MakeRootProjectTask)
-        } else {
-            module.tasks.create("makeModule", MakeModuleTask)
-        }
-        
         module.group = ext.moduleGroup
 
         module.afterEvaluate {

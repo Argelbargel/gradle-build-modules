@@ -1,6 +1,6 @@
 package argelbargel.gradle.plugins.buildModules.manager
 
-import argelbargel.gradle.plugins.buildModules.manager.repository.GitBuildModuleRepository
+import argelbargel.gradle.plugins.buildModules.manager.repository.BuildModuleGitRepository
 import org.gradle.api.Project
 import org.gradle.util.ConfigureUtil
 
@@ -15,15 +15,15 @@ class BuildModuleManagerExtension {
     private final DelegatedTaskReferenceContainer delegatedTaskContainer
 
     private File modulesFile
-    private List<BuildModule> moduleCache
     private Class<? extends BuildModuleRepository> repository
+    private List<BuildModule> moduleCache
 
     BuildModuleManagerExtension(Project project, File modulesDir, File activeModulesDir) {
         this.modulesFile = new File(project.projectDir, project.properties.getOrDefault(PROPERTY_MODULES_FILE, DEFAULT_MODULES_FILE) as String)
         this.modulesDir = modulesDir
         this.activeModulesDir = activeModulesDir
         this.delegatedTaskContainer = new DelegatedTaskReferenceContainer()
-        this.repository = GitBuildModuleRepository
+        this.repository = BuildModuleGitRepository
     }
 
     void setModulesFile(File file) {
@@ -71,6 +71,10 @@ class BuildModuleManagerExtension {
         return moduleCache.sort()
     }
 
+    void reset() {
+        moduleCache = null
+    }
+
     DelegatedTaskReferenceContainer tasks(Closure closure) {
         ConfigureUtil.configure(closure, delegatedTaskContainer)
     }
@@ -88,9 +92,9 @@ class BuildModuleManagerExtension {
         modulesFile.withInputStream {
             modules.load(it)
         }
-        
+
         return moduleCache = modules.stringPropertyNames().collect {
-            new BuildModule(modulesDir, activeModulesDir, it, instantiate(repository, modules.getProperty(it)))
+            new BuildModule(it, instantiate(repository, modules.getProperty(it)), modulesDir, activeModulesDir)
         }
     }
 }

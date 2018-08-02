@@ -7,8 +7,9 @@ import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
 
 import static argelbargel.gradle.plugins.TestUtility.buildProject
-import static argelbargel.gradle.plugins.buildModules.manager.BuildModuleManagerTestUtility.createEmptyModuleProject
-import static argelbargel.gradle.plugins.buildModules.manager.BuildModuleManagerTestUtility.createRootProject
+import static argelbargel.gradle.plugins.buildModules.common.BuildModuleConstants.getDEFAULT_MODULE_PROPERTIES_FILE
+import static argelbargel.gradle.plugins.buildModules.common.BuildModuleConstants.getPROPERTY_MODULE_NAME
+import static argelbargel.gradle.plugins.buildModules.manager.BuildModuleManagerTestUtility.*
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class BuildManagerTasksTest extends Specification {
@@ -18,6 +19,7 @@ class BuildManagerTasksTest extends Specification {
     @Before
     void createMultiModuleProject() {
         createRootProject(testProjectDir.root)
+        
         createEmptyModuleProject(testProjectDir.root, 'module1', false)
         createEmptyModuleProject(testProjectDir.root, 'module2', true)
         createEmptyModuleProject(testProjectDir.root, 'module3', false)
@@ -55,6 +57,43 @@ class BuildManagerTasksTest extends Specification {
  - module2
  - module3
 '''
+    }
+
+    def "updateModules aktiviert ein einzelnes Modul"() {
+        when:
+        BuildResult result = buildProject(testProjectDir.root, 'updateModules', '--modules=+module1', 'listModules', '-q')
+
+        then:
+        result.tasks(SUCCESS).collect { it.path } == [':updateModules', ':listModules']
+        result.output.normalize() == '''==============================
+ Available Modules
+==============================
+ - module1 (active)
+ - module2 (active)
+ - module4 (active)
+ - module3
+'''
+    }
+
+    def "updateModules aktualisiert das Modul"() {
+        when:
+        BuildResult result = buildProject(testProjectDir.root, 'updateModules', '--modules=+module1', '-q')
+
+        then:
+        result.tasks(SUCCESS).collect { it.path } == [':updateModules']
+        new File(testProjectDir.root, 'build-modules/module1/.updated').text == 'module1'
+    }
+
+    def "updateModules initialisiert und aktualisert das Modul"() {
+        given:
+        addModule(testProjectDir.root, "new")
+        when:
+        BuildResult result = buildProject(testProjectDir.root, 'updateModules', '--modules=+new', '-q')
+
+        then:
+        result.tasks(SUCCESS).collect { it.path } == [':updateModules']
+        new File(testProjectDir.root, "build-modules/new/${DEFAULT_MODULE_PROPERTIES_FILE}").text.contains("${PROPERTY_MODULE_NAME}=new")
+        new File(testProjectDir.root, 'build-modules/new/.updated').text == 'new'
     }
 
     def "updateModules ignoriert Module ohne Modifier"() {

@@ -21,10 +21,12 @@ import org.gradle.vcs.SourceControl
 final class SettingsDecorator implements Settings {
     private final Settings delegate
     private final ProjectDescriptor module
+    private final ScriptHandler buildscript
 
-    SettingsDecorator(ProjectDescriptor module, Settings delegate) {
+    SettingsDecorator(ProjectDescriptor module, Settings delegate, File sourceFile) {
         this.module = module
         this.delegate = delegate
+        this.buildscript = new ScriptHandlerDecorator(delegate.buildscript, sourceFile)
     }
 
     @SuppressWarnings("GroovyAssignabilityCheck")
@@ -61,7 +63,7 @@ final class SettingsDecorator implements Settings {
 
     @Override
     ProjectDescriptor findProject(String path) {
-        return delegate.findProject(pathRelativeToModule())
+        return delegate.findProject(pathRelativeToModule(path))
     }
 
     @Override
@@ -110,7 +112,7 @@ final class SettingsDecorator implements Settings {
 
     @Override
     ScriptHandler getBuildscript() {
-        return delegate.getBuildscript()
+        return buildscript
     }
 
     @Override
@@ -160,11 +162,6 @@ final class SettingsDecorator implements Settings {
     }
 
     @Override
-    void enableFeaturePreview(String s) {
-        delegate.enableFeaturePreview(s)
-    }
-
-    @Override
     PluginContainer getPlugins() {
         return delegate.getPlugins()
     }
@@ -172,6 +169,21 @@ final class SettingsDecorator implements Settings {
     @Override
     PluginManager getPluginManager() {
         return delegate.getPluginManager()
+    }
+
+    @Override
+    void enableFeaturePreview(String id) {
+        delegate.enabFeaturePreview(id)
+    }
+
+    boolean hasProperty(String s) {
+        return metaClass.hasProperty(this, s) || delegate.hasProperty(s)
+    }
+
+    @Override
+    Object getProperty(String s) {
+        def p = metaClass.hasProperty(this, s)
+        return p != null ? p.getProperty(this) : delegate.getProperty(s)
     }
 
     private String pathRelativeToModule(String path) {

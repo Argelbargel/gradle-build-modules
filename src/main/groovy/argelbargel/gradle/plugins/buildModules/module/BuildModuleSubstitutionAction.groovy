@@ -59,7 +59,6 @@ final class BuildModuleSubstitutionAction implements Action<Configuration> {
         return [project.path + substitution.path, substitution.configuration].join('@')
     }
 
-
     @Override
     boolean equals(o) {
         if (this.is(o)) return true

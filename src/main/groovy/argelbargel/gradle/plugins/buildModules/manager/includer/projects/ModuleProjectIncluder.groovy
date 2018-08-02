@@ -24,13 +24,16 @@ class ModuleProjectIncluder extends BuildModuleIncluder {
 
             def moduleSettingsScript = new File(projectDir, MODULE_SETTINGS_FILE)
             if (moduleSettingsScript.exists()) {
-                new SettingsDecorator(moduleProject, settings).apply from: moduleSettingsScript
+                new SettingsDecorator(moduleProject, settings, moduleSettingsScript).apply from: moduleSettingsScript
             }
 
             // damit die Abhängigkeitsersetzungen im BuildModulePlugin funktionieren, müssen wir hier festlegen,
             // dass das Haupt-Projekt von seinen Modulen abhängt
             settings.gradle.projectsLoaded {
-                it.rootProject.evaluationDependsOn(moduleProject.path)
+                // die IDEA triggert diesen Callback auch für buildSrc, daher müssen wir prüfen, ob das Projekt existiert
+                if (it.rootProject.findProject(moduleProject.path) != null) {
+                    it.rootProject.evaluationDependsOn(moduleProject.path)
+                }
             }
         }
     }

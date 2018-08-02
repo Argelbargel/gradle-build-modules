@@ -1,9 +1,14 @@
 package argelbargel.gradle.plugins.buildModules.manager.tasks
 
 import argelbargel.gradle.plugins.buildModules.manager.BuildModuleManagerExtension
+import groovy.swing.SwingBuilder
 import org.gradle.api.DefaultTask
+import org.gradle.api.logging.Logger
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
+
+import java.awt.*
+import java.util.List
 
 import static argelbargel.gradle.plugins.buildModules.common.BuildModuleConstants.MODULE_TASKS_GROUP
 import static org.apache.commons.lang3.StringUtils.isNotBlank
@@ -33,6 +38,8 @@ class UpdateModulesTask extends DefaultTask {
         def extension = project.extensions.getByType(BuildModuleManagerExtension)
         if (isNotBlank(modules)) {
             parseProperty(modules, extension)
+        } else {
+            showDialog(extension, project.logger)
         }
     }
 
@@ -43,6 +50,10 @@ class UpdateModulesTask extends DefaultTask {
             def active = checkMode(newModules, it.name, defaultMode)
             if (active != null) {
                 it.setActive(active, project.logger)
+            }
+
+            if (it.isActive()) {
+                it.setActive(it.update(project.logger), project.logger)
             }
         }
     }
@@ -55,5 +66,52 @@ class UpdateModulesTask extends DefaultTask {
         }
 
         return defaultValue
+    }
+
+    private static void showDialog(BuildModuleManagerExtension extension, Logger logger) {
+        def dialog = new SwingBuilder().dialog(modal: true,
+                title: 'Module auswählen',
+                alwaysOnTop: true,
+                resizable: false,
+                locationRelativeTo: null,
+                pack: false,
+                show: false,
+        ) {
+
+            def moduleCheckBoxes = []
+            def modules = [:]
+            borderLayout()
+            hbox(constraints: BorderLayout.NORTH) {
+                button(defaultButton: false, text: 'Alle', actionPerformed: {
+                    moduleCheckBoxes.each { it.selected = true }
+                })
+
+                button(defaultButton: false, text: 'Keines', actionPerformed: {
+                    moduleCheckBoxes.each { it.selected = false }
+                })
+            }
+
+            vbox {
+                extension.allModules.each { module ->
+                    moduleCheckBoxes += checkBox(module.name,
+                            selected: module.active,
+                            stateChanged: { modules[module] = it.source.selected }
+                    )
+                }
+            }
+
+            hbox(constraints: BorderLayout.SOUTH) {
+                button(defaultButton: true, text: 'OK', actionPerformed: {
+                    dispose()
+                    modules.each { module, active -> module.setActive(active, logger) }
+                    extension.allModules.each { it.update(logger) }
+                })
+            }
+        }
+
+
+        dialog.pack()
+        dialog.setLocationRelativeTo(null)
+        dialog.setVisible(true)
     }
 }

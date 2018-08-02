@@ -27,6 +27,7 @@ class ModuleProjectIncluderTest extends Specification {
             println "settings.project('sub'): ${settings.project('sub')}"
             println "settings.project(new File('./sub')): ${settings.project(new File("${settings.rootDir}/sub"))}"
         ''')
+
         createSubProject(moduleDir, 'sub')
         when:
         BuildResult result = buildProject(testProjectDir.root)
@@ -36,6 +37,23 @@ class ModuleProjectIncluderTest extends Specification {
         result.output.contains("settings.settingsDir: ${moduleDir}")
         result.output.contains("settings.project('sub'): :test:sub")
         result.output.contains("settings.project(new File('./sub')): :test:sub")
+        true
+    }
+
+    def "Properties von settings können abgefragt werden"() {
+        given:
+        createRootProject(testProjectDir.root)
+        createModuleProject(testProjectDir.root,
+                'test',
+                '''
+
+            println "settings.gradlePropertiesProperty: ${settings.gradlePropertiesProperty}"
+        ''')
+        new File(testProjectDir.root, "gradle.properties").text = "gradlePropertiesProperty=test"
+        when:
+        BuildResult result = buildProject(testProjectDir.root)
+        then:
+        result.output.contains("settings.gradlePropertiesProperty: test")
         true
     }
 

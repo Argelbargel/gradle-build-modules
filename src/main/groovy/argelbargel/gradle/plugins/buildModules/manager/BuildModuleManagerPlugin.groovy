@@ -13,12 +13,10 @@ import org.gradle.api.initialization.Settings
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-import static argelbargel.gradle.plugins.buildModules.common.BuildModuleConstants.DEFAULT_MODULE_PROPERTIES_FILE
-import static argelbargel.gradle.plugins.buildModules.common.BuildModuleConstants.PROPERTY_MODULE_PROPERTIES_FILE
+import static argelbargel.gradle.plugins.buildModules.common.BuildModuleConstants.*
 import static argelbargel.gradle.plugins.buildModules.manager.includer.BuildModuleIncluder.createIncluder
 import static org.apache.commons.io.filefilter.FalseFileFilter.FALSE
 import static org.apache.commons.io.filefilter.TrueFileFilter.TRUE
-
 
 class BuildModuleManagerPlugin implements Plugin<Settings> {
     static final String PROPERTY_MODULES_DIR = "buildModules.dir"
@@ -30,19 +28,29 @@ class BuildModuleManagerPlugin implements Plugin<Settings> {
 
     @Override
     void apply(Settings settings) {
-        String modulePropertiesFile = settings.properties.getOrDefault(PROPERTY_MODULE_PROPERTIES_FILE, DEFAULT_MODULE_PROPERTIES_FILE)
-        includeModules(new File(settings.rootDir, ACTIVE_MODULES_DIR), settings, new File(settings.rootDir, getModulesDir(settings)), modulePropertiesFile)
         settings.gradle.rootProject(new ProjectSetup())
         settings.gradle.rootProject(new TasksSetup())
+        String modulePropertiesFile = settings.properties.getOrDefault(PROPERTY_MODULE_PROPERTIES_FILE, DEFAULT_MODULE_PROPERTIES_FILE)
+        includeModules(new File(settings.rootDir, ACTIVE_MODULES_DIR), settings, new File(settings.rootDir, getModulesDir(settings)), modulePropertiesFile)
     }
 
     private static void includeModules(File activeModulesDir, Settings settings, File modulesDir, String modulePropertiesFile) {
         if (activeModulesDir.exists()) {
+            def included = []
+
+            settings.gradle.beforeProject {
+                if (included.contains(it.projectDir)) {
+                    it.ext.set(PROPERTY_MODULE_INCLUDED, true)
+                }
+            }
+
             FileUtils.listFilesAndDirs(activeModulesDir, FALSE, TRUE).each {
                 if (it != activeModulesDir) {
                     try {
                         LOGGER.info("Including module ${it.name}...")
-                        includeModule(settings, new File(modulesDir, it.name), modulePropertiesFile)
+                        def moduleDir = new File(modulesDir, it.name)
+                        includeModule(settings, moduleDir, modulePropertiesFile)
+                        included.add(moduleDir)
                     } catch (Exception e) {
                         LOGGER.error("Could not include module ${it.name}: ${e.message}", e)
                     }

@@ -11,6 +11,7 @@ import org.gradle.testkit.runner.internal.PluginUnderTestMetadataReading
 import java.util.concurrent.atomic.AtomicBoolean
 
 import static java.util.Arrays.asList
+import static org.apache.commons.lang3.StringUtils.isNotBlank
 
 final class TestUtility {
 
@@ -37,8 +38,23 @@ final class TestUtility {
         (project as ProjectInternal).configurations.findAll { it.canBeResolved }.each { it.resolve() }
     }
 
+    static void prepareProject(File projectDir, String buildScript, String settings = '') {
+        projectDir.mkdirs()
+        new File(projectDir, "build.gradle").text = """
+            buildscript {
+                ${pluginUnderTestDependencies()}
+            }
+
+            ${buildScript}
+        """
+        
+        if (isNotBlank(settings)) {
+            new File(projectDir, "settings.gradle").text = createSettings(settings)
+        }
+    }
+
     static BuildResult buildScript(File projectDir, String buildScript, String... arguments) {
-        new File(projectDir, "build.gradle").text = buildScript
+        prepareProject(projectDir, buildScript)
         buildProject(projectDir, arguments)
     }
 
@@ -51,16 +67,22 @@ final class TestUtility {
     }
 
     static String createSettings(String settings) {
-        ClassPath cp = DefaultClassPath.of(PluginUnderTestMetadataReading.readImplementationClasspath())
-
         return """
             buildscript {
-                dependencies {
-                    classpath files(${cp.asFiles.collect { "'${it.toURI()}'" }})
-                }
+                ${pluginUnderTestDependencies()}
             }
 
             ${settings}
+        """
+    }
+
+    static String pluginUnderTestDependencies() {
+        ClassPath cp = DefaultClassPath.of(PluginUnderTestMetadataReading.readImplementationClasspath())
+
+        return """
+                dependencies {
+                    classpath files(${cp.asFiles.collect { "'${it.toURI()}'" }})
+                }
         """
     }
 

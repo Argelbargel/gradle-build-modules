@@ -6,6 +6,7 @@ final class BuildModuleConstants {
     static final String PROPERTY_MODULE_GROUP = 'buildModule.group'
     static final String PROPERTY_MODULE_CONFIGURATION = 'buildModule.configuration'
     static final String PROPERTY_MODULE_INCLUDEBUILD = 'buildModule.includeBuild'
+    static final String PROPERTY_MODULE_INCLUDED = 'buildModule.included'
 
     static final String DEFAULT_MODULE_PROPERTIES_FILE = 'gradle.properties'
     static final String MODULE_SETTINGS_FILE = "build-module.gradle"
