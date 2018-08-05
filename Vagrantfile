@@ -26,7 +26,7 @@ Vagrant.configure(2) do |config|
   end
 
   config.vm.provision 'update', type: 'shell', inline: 'apt-get update -yy', privileged: true
-  config.vm.provision 'install ruby', type: 'shell', inline: 'apt-get install -yy ruby ruby-dev libffi-dev', privileged: true
+  config.vm.provision 'install ruby', type: 'shell', inline: 'apt-get install -yy libffi-dev ruby ruby-dev ruby-ffi', privileged: true
   config.vm.provision 'install travis', type: 'shell', inline: 'gem install travis -v 1.8.8 --no-rdoc -no-ri -n /usr/bin', privileged: true
   config.vm.provision 'generate key', run: 'always', type: 'shell', inline: GENERATE_DEPLOY_KEY, args: [GITHUB_USER, GITHUB_TOKEN, KEY_FILE], privileged: false
 end

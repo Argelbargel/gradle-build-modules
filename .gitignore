@@ -3,5 +3,6 @@
 build/
 out/
 ./settings.gradle
+deploy_key
 *.iml
 
