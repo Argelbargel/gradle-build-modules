@@ -52,7 +52,7 @@ apply plugin: 'argelbargel.build-modules.module'
 
 Additonally you must add the following properties to `gradle.properties` of each module:
 
-'''
+```
 buildModule.name=<module-name>
 buildModule.group=<module-group>
-'''
+```
