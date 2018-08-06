@@ -62,7 +62,6 @@ pluginBundle {
         buildModule {
             displayName = 'Build-Module-Plugin'
         }
-
         buildModuleManager {
             displayName = 'Build-Module-Manager-Plugin'
         }

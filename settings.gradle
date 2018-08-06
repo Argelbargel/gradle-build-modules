@@ -1,1 +1,2 @@
+rootProject.name = 'build-modules'
 enableFeaturePreview('STABLE_PUBLISHING')
