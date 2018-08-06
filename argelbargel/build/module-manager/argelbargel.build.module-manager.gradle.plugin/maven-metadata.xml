@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>argelbargel.build.module-manager</groupId>
+  <artifactId>argelbargel.build.module-manager.gradle.plugin</artifactId>
+  <versioning>
+    <release>travis-dev-4</release>
+    <versions>
+      <version>travis-dev-4</version>
+    </versions>
+    <lastUpdated>20180806082222</lastUpdated>
+  </versioning>
+</metadata>
