@@ -1,0 +1,13 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        gradlePluginPortal()
+        maven { url 'https://raw.githubusercontent.com/Argelbargel/gradle-build-modules/mvn-repo/' }
+    }
+    dependencies {
+        classpath 'argelbargel.gradle.plugins:build-modules:0.5.1'
+    }
+}
+
+apply plugin: 'argelbargel.build-modules.module'
