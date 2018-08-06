@@ -13,5 +13,6 @@ chmod +x ./gradlew
 
 if [ "$TRAVIS_TAG" != "" ]; then
     ./travis/publish.sh
+    ./gradlew publishPlugins -Prelease=${TRAVIS_TAG} -Pgradle.publish.key=${GRADLE_PUBLISH_KEY} -Pgradle.publish.secret=${GRADLE_PUBLISH_SECRECT}
 fi
 
