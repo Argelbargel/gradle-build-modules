@@ -22,9 +22,6 @@ deploy:
     - "build/repo/argelbargel/gradle/plugins/build-modules/$TRAVIS_TAG/build-modules-$TRAVIS_TAG.jar"
     - "build/repo/argelbargel/gradle/plugins/build-modules/$TRAVIS_TAG/build-modules-$TRAVIS_TAG.jar.md5"
     - "build/repo/argelbargel/gradle/plugins/build-modules/$TRAVIS_TAG/build-modules-$TRAVIS_TAG.jar.sha1"
-    - "build/repo/argelbargel/gradle/plugins/build-modules/$TRAVIS_TAG/build-modules-$TRAVIS_TAG.pom"
-    - "build/repo/argelbargel/gradle/plugins/build-modules/$TRAVIS_TAG/build-modules-$TRAVIS_TAG.pom.md5"
-    - "build/repo/argelbargel/gradle/plugins/build-modules/$TRAVIS_TAG/build-modules-$TRAVIS_TAG.pom.sha1"
 
 cache:
   directories:
