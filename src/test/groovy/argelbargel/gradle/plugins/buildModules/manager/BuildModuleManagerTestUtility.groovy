@@ -49,14 +49,14 @@ class BuildModuleManagerTestUtility {
             }
 
             apply plugin: 'base'
-            apply plugin: 'argelbargel.build.module'
+            apply plugin: 'argelbargel.build-modules.module'
         """
 
     static void createRootProject(File rootDir, String settings = EMPTY, String build = ROOT_PROJECT_BUILD_SCRIPT) {
         newFile(rootDir, 'build.gradle').text = build
         newFile(rootDir, PROJECT_SETTINGS_FILE).text = createSettings("""
             ${settings}
-            apply plugin: 'argelbargel.build.module-manager'
+            apply plugin: 'argelbargel.build-modules.manager'
         """)
     }
 

@@ -2,7 +2,7 @@ plugins {
     id 'groovy'
     id 'java-gradle-plugin'
     id 'maven-publish'
-    id "com.gradle.plugin-publish" version "0.9.10"
+    id "com.gradle.plugin-publish" version "0.10.0"
 }
 
 group "argelbargel.gradle.plugins"
@@ -42,12 +42,29 @@ dependencies {
 gradlePlugin {
     plugins {
         buildModule {
-            id = 'argelbargel.build.module'
+            id = 'argelbargel.build-modules.module'
             implementationClass = "${group}.buildModules.module.BuildModulePlugin"
         }
         buildModuleManager {
-            id = 'argelbargel.build.module-manager'
+            id = 'argelbargel.build-modules.manager'
             implementationClass = "${group}.buildModules.manager.BuildModuleManagerPlugin"
+        }
+    }
+}
+
+pluginBundle {
+    website = 'https://github.com/Argelbargel/gradle-build-modules'
+    vcsUrl = 'https://github.com/Argelbargel/gradle-build-modules'
+    description = 'Gradle-Plugin which allows to create a gradle-build which ties together multiple otherwise separate gradle-projects. It\'s use-case is quite similar to that of gradle\'s own Composite builds.'
+    tags = ['build', 'modules']
+
+    plugins {
+        buildModule {
+            displayName = 'Build-Module-Plugin'
+        }
+
+        buildModuleManager {
+            displayName = 'Build-Module-Manager-Plugin'
         }
     }
 }
