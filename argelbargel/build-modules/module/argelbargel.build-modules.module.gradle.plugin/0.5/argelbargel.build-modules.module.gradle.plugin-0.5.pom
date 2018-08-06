@@ -8,7 +8,7 @@
   <dependencies>
     <dependency>
       <groupId>argelbargel.gradle.plugins</groupId>
-      <artifactId>gradle-build-modules</artifactId>
+      <artifactId>build-modules</artifactId>
       <version>0.5</version>
     </dependency>
   </dependencies>

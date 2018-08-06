@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metadata>
-  <groupId>argelbargel.build-modules.module</groupId>
-  <artifactId>argelbargel.build-modules.module.gradle.plugin</artifactId>
+  <groupId>argelbargel.gradle.plugins</groupId>
+  <artifactId>build-modules</artifactId>
   <versioning>
     <release>0.5</release>
     <versions>
