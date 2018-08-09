@@ -173,7 +173,7 @@ final class SettingsDecorator implements Settings {
 
     @Override
     void enableFeaturePreview(String id) {
-        delegate.enabFeaturePreview(id)
+        delegate.enableFeaturePreview(id)
     }
 
     boolean hasProperty(String s) {
